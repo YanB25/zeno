@@ -6,6 +6,7 @@ option(BUILD_BINARIES "Build the binaries in {project}/bin directory" ON)
 option(BUILD_STATIC_LIBS "Build the static library" ON)
 option(BUILD_SHARED_LIBS "Build the shared library" ON)
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -22,6 +23,14 @@ find_package(Boost
     REQUIRED
     COMPONENTS
     system thread)
+
+# handle dependency aio
+find_package(AIO MODULE REQUIRED)
+if (${AIO_FOUND})
+    # target_compile_definitions(helloworld_obj PUBLIC YBENCH_USE_AIO)
+    # target_include_directories(helloworld_obj PUBLIC "${AIO_INCLUDE_DIR}")    
+    # target_link_libraries(helloworld_obj PUBLIC "${AIO_LIBRARIES}")
+endif()
 
 # headers to install
 file(GLOB_RECURSE HELLOWORLD_PUBLIC_HEADER include/*)

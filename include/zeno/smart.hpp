@@ -2,32 +2,32 @@
 #define SMART_H
 #include <string>
 
-#include "define.hpp"
+#include "zeno/define.hpp"
 namespace zeno
 {
 namespace smart
 {
 inline std::string toSize(double size)
 {
-    if (size < 1 * define::KB)
+    if (size < 1 * define::KiB)
     {
         return std::to_string(size) + " B";
     }
-    else if (size < 1 * define::MB)
+    else if (size < 1 * define::MiB)
     {
-        return std::to_string(size / define::KB) + " KB";
+        return std::to_string(size / define::KiB) + " KiB";
     }
-    else if (size < 1 * define::GB)
+    else if (size < 1 * define::GiB)
     {
-        return std::to_string(size / define::MB) + " MB";
+        return std::to_string(size / define::MiB) + " MiB";
     }
-    else if (size < 1 * define::TB)
+    else if (size < 1 * define::TiB)
     {
-        return std::to_string(size / define::GB) + " GB";
+        return std::to_string(size / define::GiB) + " GiB";
     }
     else
     {
-        return std::to_string(size / define::TB) + " TB";
+        return std::to_string(size / define::TiB) + " TiB";
     }
 }
 inline std::string toNum(double ops)

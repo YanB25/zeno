@@ -5,10 +5,10 @@ namespace zeno
 {
 namespace define
 {
-constexpr uint64_t KB = 1024ull;
-constexpr uint64_t MB = 1024ull * KB;
-constexpr uint64_t GB = 1024ull * MB;
-constexpr uint64_t TB = 1024ull * GB;
+constexpr uint64_t KiB = 1024ull;
+constexpr uint64_t MiB = 1024ull * KiB;
+constexpr uint64_t GiB = 1024ull * MiB;
+constexpr uint64_t TiB = 1024ull * GiB;
 
 constexpr uint64_t K = 1000ull;
 constexpr uint64_t M = 1000ull * K;
