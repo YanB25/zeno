@@ -1,8 +1,12 @@
-# C++ Project Template
+# Zeno
 
-A C++ template to quickly start your own project.
+You know what is Zeno.
 
-This template includes a simplest runnable zeno program, which breaks down into a `zeno` lib (see src/ and include/zeno/) and an executable (see bin/main.cpp).
+At least now I know, tcp/udp on commodity NIC is VERY SLOW.  
+It's like 240+ Kops per-core for small packets, leading to a ~15MB/s network bw.  
+
+If I need to saturate 4GB/s, I need 64Mops 64B packet. As a comparasion, RDMA has ~7100 Kops per-core, leading to 0.42 GB/s.
+
 
 ## Compile
 
