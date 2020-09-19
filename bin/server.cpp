@@ -66,10 +66,11 @@ public:
                 {
                     dinfo("server recv msg with size = %lu", bytes_recvd);
 
-                    int client_id = zeno::parse::ParseClientId(data_);
+                    auto client_id = zeno::net::ParseClientId(data_);
                     if (endpoint_map_.find(client_id) == endpoint_map_.end())
                     {
-                        info("Permanently add (%d, %s:%d) into known clients",
+                        info("Permanently add (%" PRIu64
+                             ", %s:%d) into known clients",
                              client_id,
                              sender_endpoint_.address().to_string().c_str(),
                              sender_endpoint_.port());
@@ -96,7 +97,7 @@ public:
 private:
     udp::socket socket_;
     udp::endpoint sender_endpoint_;
-    std::unordered_map<int, udp::endpoint> endpoint_map_;
+    std::unordered_map<zeno::net::ClientId, udp::endpoint> endpoint_map_;
 
     boost::asio::deadline_timer deadline_;
     enum
