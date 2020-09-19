@@ -11,6 +11,10 @@ add_executable(server server.cpp)
 target_link_libraries(server PRIVATE helloworld_obj ${Boost_LIBRARIES} pthread)
 target_include_directories(server PUBLIC ${Boost_INCLUDE_DIRS})
 
+add_executable(multithread-server multithread-server.cpp)
+target_link_libraries(multithread-server PRIVATE helloworld_obj ${Boost_LIBRARIES} pthread)
+target_include_directories(multithread-server PUBLIC ${Boost_INCLUDE_DIRS})
+
 add_executable(client client.cpp)
 target_link_libraries(client PRIVATE helloworld_obj ${Boost_LIBRARIES} pthread)
 target_include_directories(client PUBLIC ${Boost_INCLUDE_DIRS})

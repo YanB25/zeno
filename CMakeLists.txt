@@ -21,7 +21,7 @@ find_package(Boost
     1.71
     REQUIRED
     COMPONENTS
-    system)
+    system thread)
 
 # headers to install
 file(GLOB_RECURSE HELLOWORLD_PUBLIC_HEADER include/*)

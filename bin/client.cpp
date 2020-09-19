@@ -25,7 +25,7 @@ using boost::asio::ip::udp;
 constexpr static int kMaxLength = 1024;
 constexpr static int kMsgLength = 64;
 constexpr static int kClientSendBatch = 100;
-constexpr static int kClientThread = 14;
+constexpr static int kClientThread = 3;
 
 std::atomic<uint64_t> count{0};
 
