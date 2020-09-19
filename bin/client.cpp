@@ -25,11 +25,10 @@ using boost::asio::ip::udp;
 constexpr static int kMaxLength = 1024;
 constexpr static int kMsgLength = 64;
 constexpr static int kClientSendBatch = 100;
-constexpr static int kClientThread = 3;
 
 std::atomic<uint64_t> count{0};
 
-void client_loop(int argc, char *argv[], int id)
+void client_loop(int id, const char *host, const char *port)
 {
     char buffer[kMaxLength];
     char dev_null[kMaxLength];
@@ -40,20 +39,15 @@ void client_loop(int argc, char *argv[], int id)
     packet_header.client_id = id;
     packet_header.packet_type = zeno::net::PacketType::Normal;
 
-    if (argc != 3)
-    {
-        panic("Usage: blocking_udp_echo_client <host> <port>");
-    }
-
     boost::asio::io_context io_context;
 
     udp::socket s(io_context, udp::endpoint(udp::v4(), 0));
 
     udp::resolver resolver(io_context);
     udp::resolver::results_type endpoints =
-        resolver.resolve(udp::v4(), argv[1], argv[2]);
+        resolver.resolve(udp::v4(), host, port);
 
-    info("Client %d connects to %s:%s", id, argv[1], argv[2]);
+    info("Client %d connects to %s:%s", id, host, port);
 
     udp::endpoint sender_endpoint;
 
@@ -106,18 +100,22 @@ int main(int argc, char *argv[])
         }
     });
 
-    for (int i = 0; i < kClientThread; ++i)
+    if (argc != 4)
     {
-        client_threads.emplace_back(client_loop, argc, argv, i);
+        std::cerr << "Usage: blocking_udp_echo_client <host> <port> <thread>\n";
+        return 1;
+    }
+    const char *host = argv[1];
+    const char *port = argv[2];
+    int thread_nr = std::stoi(argv[3]);
+
+    for (int i = 0; i < thread_nr; ++i)
+    {
+        client_threads.emplace_back(client_loop, i, host, port);
     }
 
     try
     {
-        if (argc != 3)
-        {
-            std::cerr << "Usage: blocking_udp_echo_client <host> <port>\n";
-            return 1;
-        }
     }
     catch (std::exception &e)
     {
