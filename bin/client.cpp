@@ -33,6 +33,9 @@ void client_loop(int argc, char *argv[], int id)
     char buffer[kMaxLength];
     char dev_null[kMaxLength];
 
+    *((uint64_t *) buffer) = kMsgLength;
+    *((uint64_t *) (buffer + sizeof(uint64_t))) = id;
+
     if (argc != 3)
     {
         panic("Usage: blocking_udp_echo_client <host> <port>");
@@ -66,16 +69,9 @@ void client_loop(int argc, char *argv[], int id)
 
 int main(int argc, char *argv[])
 {
-    char buffer[kMaxLength];
-
     check(kMsgLength < kMaxLength, "msg size should < max length");
 
     std::vector<std::thread> client_threads;
-
-    for (int i = 0; i < kMsgLength; ++i)
-    {
-        buffer[i] = 'a';
-    }
 
     std::thread timer([&]() {
         uint64_t last_value = 0;

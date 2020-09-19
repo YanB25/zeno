@@ -14,8 +14,11 @@
 #include <boost/asio/ip/udp.hpp>
 #include <cstdlib>
 #include <iostream>
+#include <unordered_map>
+#include <unordered_set>
 
 #include "zeno/debug.hpp"
+#include "zeno/parser.hpp"
 
 using boost::asio::ip::udp;
 
@@ -38,7 +41,7 @@ public:
         if (deadline_.expires_at() <=
             boost::asio::deadline_timer::traits_type::now())
         {
-            info("Heartbeat one second.");
+            dinfo("Heartbeat one second.");
             deadline_.expires_from_now(boost::posix_time::seconds(1));
         }
         deadline_.async_wait([&](boost::system::error_code ec) {
@@ -62,6 +65,16 @@ public:
                 if (!ec && bytes_recvd > 0)
                 {
                     dinfo("server recv msg with size = %lu", bytes_recvd);
+
+                    int client_id = zeno::parse::ParseClientId(data_);
+                    if (endpoint_map_.find(client_id) == endpoint_map_.end())
+                    {
+                        info("Permanently add (%d, %s:%d) into known clients",
+                             client_id,
+                             sender_endpoint_.address().to_string().c_str(),
+                             sender_endpoint_.port());
+                        endpoint_map_[client_id] = sender_endpoint_;
+                    }
                     do_send(bytes_recvd);
                 }
                 else
@@ -83,6 +96,8 @@ public:
 private:
     udp::socket socket_;
     udp::endpoint sender_endpoint_;
+    std::unordered_map<int, udp::endpoint> endpoint_map_;
+
     boost::asio::deadline_timer deadline_;
     enum
     {
