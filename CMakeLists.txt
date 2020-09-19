@@ -33,7 +33,7 @@ target_include_directories(helloworld_obj PUBLIC ${HELLOWORLD_INCLUDE_DIRECTORIE
 
 if (${BUILD_BINARIES})
     add_subdirectory(bin)
-endif()
+endif() 
 
 if (${BUILD_STATIC_LIBS})
     add_library(zeno-static STATIC $<TARGET_OBJECTS:helloworld_obj>)
