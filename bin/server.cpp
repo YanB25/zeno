@@ -9,6 +9,9 @@
 //
 
 #include <boost/asio.hpp>
+#include <boost/asio/deadline_timer.hpp>
+#include <boost/asio/io_context.hpp>
+#include <boost/asio/ip/udp.hpp>
 #include <cstdlib>
 #include <iostream>
 
@@ -20,10 +23,34 @@ class server
 {
 public:
     server(boost::asio::io_context &io_context, short port)
-        : socket_(io_context, udp::endpoint(udp::v4(), port))
+        : socket_(io_context, udp::endpoint(udp::v4(), port)),
+          deadline_(io_context)
     {
         info("Server is listening on 0.0.0.0:%d", port);
+        deadline_.expires_from_now(boost::posix_time::seconds(1));
+
+        check_timeout();
         do_receive();
+    }
+
+    void check_timeout()
+    {
+        if (deadline_.expires_at() <=
+            boost::asio::deadline_timer::traits_type::now())
+        {
+            info("Heartbeat one second.");
+            deadline_.expires_from_now(boost::posix_time::seconds(1));
+        }
+        deadline_.async_wait([&](boost::system::error_code ec) {
+            if (!ec)
+            {
+                check_timeout();
+            }
+            else
+            {
+                error("timer get errno: %d", ec.value());
+            }
+        });
     }
 
     void do_receive()
@@ -56,6 +83,7 @@ public:
 private:
     udp::socket socket_;
     udp::endpoint sender_endpoint_;
+    boost::asio::deadline_timer deadline_;
     enum
     {
         max_length = 1024
