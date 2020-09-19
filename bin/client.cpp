@@ -18,6 +18,7 @@
 #include <zeno/smart.hpp>
 
 #include "zeno/debug.hpp"
+#include "zeno/header.hpp"
 
 using boost::asio::ip::udp;
 
@@ -33,8 +34,11 @@ void client_loop(int argc, char *argv[], int id)
     char buffer[kMaxLength];
     char dev_null[kMaxLength];
 
-    *((uint64_t *) buffer) = kMsgLength;
-    *((uint64_t *) (buffer + sizeof(uint64_t))) = id;
+    auto &packet_header = *(zeno::net::PacketHeader *) buffer;
+
+    packet_header.packet_length = kMsgLength;
+    packet_header.client_id = id;
+    packet_header.packet_type = zeno::net::PacketType::Normal;
 
     if (argc != 3)
     {
